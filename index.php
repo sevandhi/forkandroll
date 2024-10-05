@@ -1,3 +1,16 @@
+<?php
+    // Database connection
+    $conn = new mysqli('localhost', 'root', '', 'library');
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Fetch books
+    $sql = "SELECT * FROM books";
+    $result = $conn->query($sql);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +34,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Book entries will be inserted here by PHP -->
+                    <?php
+                        if ($result->num_rows > 0) {
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $row['id'] . "</td>";
+                                echo "<td>" . $row['title'] . "</td>";
+                                echo "<td>" . $row['author'] . "</td>";
+                                echo "<td><button class='delete-book' data-id='" . $row['id'] . "'>Delete</button></td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='4'>No books found</td></tr>";
+                        }
+                    ?>
                 </tbody>
             </table>
         </div>
@@ -39,3 +65,7 @@
     <script src="app.js"></script>
 </body>
 </html>
+
+<?php
+    $conn->close();
+?>
